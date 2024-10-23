@@ -6,7 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MicroRabbit.Infra.Bus
 {
@@ -100,7 +104,7 @@ namespace MicroRabbit.Infra.Bus
         private async Task Consumer_Received(object sender, BasicDeliverEventArgs e)
         {
             var eventName = e.RoutingKey;
-            var message = Encoding.UTF8.GetString(e.Body.ToArray());
+            var message = Encoding.UTF8.GetString(e.Body);
 
             try
             {
@@ -113,7 +117,7 @@ namespace MicroRabbit.Infra.Bus
 
         private async Task ProcessEvent(string eventName, string message)
         {
-            if (_handlers.ContainsKey(eventName))
+            if(_handlers.ContainsKey(eventName))
             {
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
